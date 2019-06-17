@@ -3,7 +3,7 @@ from setuptools import setup
 setup(name='c__lib',
       version='0.7',
       description='A personal collection of some useful functionalities.',
-      url='https://drive.google.com/open?id=1fv5MRd_305AriXc_qm2eInxup-YeCHis',
+      url='https://github.com/Cubiss/c__lib',
       author='Cubiss',
       author_email='cubiss.dev@gmail.com',
       license='WTFPL',
