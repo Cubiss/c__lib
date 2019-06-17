@@ -52,16 +52,26 @@ else:
                               "Make sure you have 'readline' module (linux) or 'pyreadline' module (windows).")
 
 
-def yes_no_input(prompt):
+def yes_no_input(prompt, yes_responses: list = None, no_responses: list = None):
+    """
+    Displays prompt and waits for 'right' answer (yes/no and abbreviations])
+    :param prompt: Message to be displayed until user gives correct answer.
+    :param yes_responses: Answers which return true. [y, yes] by default.
+    :param no_responses: Answers which return false. [n, no] by default.
+    :return: True if user's answer is in yes_responses.
+    """
+
+    yes_responses = yes_responses or ['y', 'yes']
+    no_responses = no_responses or ['no', 'n']
+
     while True:
         response = input(prompt)
-        if response in ['Yes, Y, y, yes']:
+        if response.lower() in yes_responses:
             return True
-        elif response in ['No, N, no, n']:
+        elif response.lower() in no_responses:
             return False
         else:
             continue
-
 
 if __name__ == '__main__':
     print('This is just a library. Not a runnable script.')

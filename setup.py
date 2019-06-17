@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='c__lib',
-      version='0.6',
+      version='0.7',
       description='A personal collection of some useful functionalities.',
       url='https://drive.google.com/open?id=1fv5MRd_305AriXc_qm2eInxup-YeCHis',
       author='Cubiss',
