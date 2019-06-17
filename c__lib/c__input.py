@@ -27,15 +27,7 @@ if c__input_implementation == 'linux':
         finally:
             readline.set_startup_hook()
 elif c__input_implementation == 'windows':
-
-    print('Using {} implementation.'.format(c__input_implementation))
-
-    def asd():
-        print('asd was called.')
-
     def c__input(prompt, prefill=''):
-        # lambda: readline.insert_text(prefill)
-        readline.set_pre_input_hook(asd)
         try:
             return input(prompt)
         finally:
@@ -72,6 +64,7 @@ def yes_no_input(prompt, yes_responses: list = None, no_responses: list = None):
             return False
         else:
             continue
+
 
 if __name__ == '__main__':
     print('This is just a library. Not a runnable script.')
