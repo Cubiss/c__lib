@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='c__lib',
-      version='0.7',
+      version='0.8',
       description='A personal collection of some useful functionalities.',
       url='https://github.com/Cubiss/c__lib',
       author='Cubiss',

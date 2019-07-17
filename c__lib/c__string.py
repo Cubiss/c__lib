@@ -16,7 +16,7 @@ def base_n(number, base, fill=(0, ''), symbols="0123456789abcdefghijklmnopqrstuv
 
 
 def strip_split_text(text,
-               viable_chars=r'a-zA-Z0-9.,!?:'):
+                     viable_chars=r'a-zA-Z0-9.,!?:'):
     """
     Strips text of any characters not included in viable_chars.
     Returns tuple (left removed, remaining, right removed).
@@ -57,14 +57,55 @@ size_to_string.max_len = 8  # Maximal length of string returned by size_to_strin
 
 
 def print_progress(progress, finish,
-                        start_symbol='\r',
-                        end_symbol='',
-                        display_file_size=True,
-                        progress_bar=True, progress_symbol='*', full_symbol='_', progress_bar_len=50):
+                   start_symbol='\r',
+                   end_symbol='',
+                   display_file_size=True,
+                   progress_bar=True, progress_symbol='*', full_symbol='_', progress_bar_len=50):
     """
     Prints nicely formatted progress indicator.
     :param progress: How much is done.
     :param finish: How much is 100%.
+    :param start_symbol: String that will be before progress bar.
+    :param end_symbol: String that will be after progress bar.
+    :param display_file_size: Whether text representation should be displayed. i.e. '[14/50]'
+    :param progress_bar: Whether progress bar should be displayed. i.e. '(******_________)'
+    :param progress_symbol: String representing one bit of finished progress. i.e. '*'
+    :param full_symbol: String representing one bit of unfinished task. Should be same width as progress_symbol i.e. '_'
+    :param progress_bar_len: Length of progress bar. i.e. 50
+    :return: None
+    """
+    symbols = progress // (finish // progress_bar_len)
+
+    if display_file_size and progress_bar:
+        print(start_symbol +
+              "{}/{} ".format(str(progress).rjust(len(str(progress)), ' '), str(finish)) +
+              '[' +
+              "".rjust(symbols, progress_symbol) +
+              "".rjust(progress_bar_len - symbols, full_symbol) +
+              ']',
+              end=end_symbol)
+    elif display_file_size:
+        print(start_symbol +
+              "{}/{}".format(str(progress).rjust(len(str(progress)), ' '), str(finish)),
+              end=end_symbol)
+    elif progress_bar:
+        print(start_symbol +
+              '[' +
+              "".rjust(symbols, progress_symbol) +
+              "".rjust(progress_bar_len - symbols, full_symbol) +
+              ']',
+              end=end_symbol)
+
+
+def print_data_transfer_progress(progress, finish,
+                                 start_symbol='\r',
+                                 end_symbol='',
+                                 display_file_size=True,
+                                 progress_bar=True, progress_symbol='*', full_symbol='_', progress_bar_len=50):
+    """
+    Prints nicely formatted progress with file size indicator.
+    :param progress: How much is done (in bytes).
+    :param finish: How much is 100% (in bytes).
     :param start_symbol: String that will be before progress bar.
     :param end_symbol: String that will be after progress bar.
     :param display_file_size: Whether text representation should be displayed. i.e. '[14/50]'
@@ -95,6 +136,7 @@ def print_progress(progress, finish,
               "".rjust(progress_bar_len - symbols, full_symbol) +
               ']',
               end=end_symbol)
+
 
 if __name__ == '__main__':
     print('This is just a library. Not a runnable script.')
