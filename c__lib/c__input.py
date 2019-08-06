@@ -35,16 +35,16 @@ elif c__input_implementation == 'windows':
 
 
 elif c__input_implementation:
-    def c__input(prompt, prefill=''):
+    def c__input(prompt: str, prefill=''):
         raise CubissException("This function is not available due to missing implementation: {}"
                               .format(c__input_implementation))
 else:
-    def c__input(prompt, prefill=''):
-        raise CubissException("This function is not available due to missing module. \n"
+    def c__input(prompt: str, prefill=''):
+        raise CubissException("This function is not available due to a missing module. \n"
                               "Make sure you have 'readline' module (linux) or 'pyreadline' module (windows).")
 
 
-def yes_no_input(prompt, yes_responses: list = None, no_responses: list = None):
+def yes_no_input(prompt: str, yes_responses: list = None, no_responses: list = None):
     """
     Displays prompt and waits for 'right' answer (yes/no and abbreviations])
     :param prompt: Message to be displayed until user gives correct answer.
@@ -58,10 +58,41 @@ def yes_no_input(prompt, yes_responses: list = None, no_responses: list = None):
 
     while True:
         response = input(prompt)
-        if response.lower() in yes_responses:
+        if response.lower() in [r.lower() for r in yes_responses]:
             return True
-        elif response.lower() in no_responses:
+        elif response.lower() in [r.lower() for r in no_responses]:
             return False
+        else:
+            continue
+
+
+def multiple_choice_input(prompt: str, choices):
+    """
+    Displays multiple choice prompt and waits for 'right' answer (number/key in choices dict)
+    :param prompt: Message to be displayed until user gives correct answer.
+    :param choices: An iterable of choices.
+                    If it is dictionary, choices will be displayed as '<key>) <value>' and chosen key will be returned.
+                    If it is other iterable, choices will be displayed as '<index>) <value>' and index will be returned.
+    :return: Key (or index) of chosen answer.
+    """
+    if len(choices) < 1:
+        raise CubissException('There must be at least one choice.')
+
+    if not issubclass(type(choices), dict):
+        choices = {key: value for key, value in enumerate(choices)}
+
+    original_keys = {str(key): key for key in choices.keys()}
+
+    choices = {str(key): value for key, value in choices.items()}
+
+    while True:
+        print(prompt)
+        for key, value in choices.items():
+            print(f'{str(key)}) {value}')
+        response = input()
+
+        if response in choices.keys():
+            return original_keys[response]
         else:
             continue
 
