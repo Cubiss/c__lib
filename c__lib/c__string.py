@@ -190,14 +190,20 @@ def seconds_to_czech_string(seconds):
 
     ret = None
 
+    parts = 0
+
     for t in (seconds_str, minutes_str, hours_str, days_str):
         if t is None:
             continue
 
-        if ret is None:
-            ret = f'a {t}'
+        parts += 1
+
+        if parts == 1:
+            ret = f'{t}'
+        elif parts == 2:
+            ret = f'{t} a {ret}'
         else:
-            ret = f'{t} {ret}'
+            ret = f'{t}, {ret}'
 
     return ret
 
