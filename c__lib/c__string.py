@@ -138,5 +138,69 @@ def print_data_transfer_progress(progress, finish,
               end=end_symbol)
 
 
+def seconds_to_czech_string(seconds):
+    """Converts seconds to days/hours/minutes/seconds in czech language"""
+
+    seconds = abs(int(seconds))
+
+    days, seconds = divmod(seconds, 86400)
+    hours, seconds = divmod(seconds, 3600)
+    minutes, seconds = divmod(seconds, 60)
+
+    days_str = None
+    hours_str = None
+    minutes_str = None
+    seconds_str = None
+
+    if days > 0:
+        days_str = f'{days}'
+        if days == 1:
+            days_str += f' den'
+        elif days < 5:
+            days_str += f' dny'
+        else:
+            days_str += f' dní'
+
+    if hours > 0:
+        hours_str = f'{hours}'
+        if hours == 1:
+            hours_str += ' hodina'
+        elif hours < 5:
+            hours_str += ' hodiny'
+        else:
+            hours_str += ' hodin'
+
+    if minutes > 0:
+        minutes_str = f'{minutes}'
+        if minutes == 1:
+            minutes_str += ' minuta'
+        elif minutes < 5:
+            minutes_str += ' minuty'
+        else:
+            minutes_str += ' minut'
+
+    if seconds > 0:
+        seconds_str = f'{seconds}'
+        if seconds == 1:
+            seconds_str += ' sekunda'
+        elif seconds < 5:
+            seconds_str += ' sekundy'
+        else:
+            seconds_str += ' sekund'
+
+    ret = None
+
+    for t in (seconds_str, minutes_str, hours_str, days_str):
+        if t is None:
+            continue
+
+        if ret is None:
+            ret = f'a {t}'
+        else:
+            ret = f'{t} {ret}'
+
+    return ret
+
+
 if __name__ == '__main__':
     print('This is just a library. Not a runnable script.')
