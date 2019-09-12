@@ -208,5 +208,58 @@ def seconds_to_czech_string(seconds):
     return ret
 
 
+def money_string(amount, spacer=" ", delimiter=".", group_size=3, decimals=2):
+    """
+    Formats ammount as money string.
+    :param amount: Ammount of money. Must be integer, float or anything convertible to float.
+    :param spacer: Character used to space groups. [" "]
+    :param delimiter: Decimal delimiter. [.]
+    :param group_size: Number of digits per group. [3]
+    :param decimals: Number of decimals to be displayed [2]
+    :return:
+    """
+    if type(amount) is int:
+        s = str(amount)
+        ret = ''
+        i = 0
+        for c in reversed(s):
+            if i == group_size:
+                i = 0
+                ret = spacer + ret
+
+            ret = c + ret
+
+            i += 1
+
+        return ret
+
+    if type(amount) is not float:
+        try:
+            amount = float(amount)
+        except Exception as ex:
+            raise Exception(f'Failed to convert `{amount}` to float.\n{str(ex)}')
+
+    f = f'%.{decimals}f'
+    s = f % amount
+
+    i, d = s.split('.')
+
+    s = str(i)
+    ret = ''
+    i = 0
+    for c in reversed(s):
+        if i == group_size:
+            i = 0
+            ret = spacer + ret
+
+        ret = c + ret
+
+        i += 1
+
+    ret = f'{ret}{delimiter}{d}'
+
+    return ret
+
+
 if __name__ == '__main__':
     print('This is just a library. Not a runnable script.')
