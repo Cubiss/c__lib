@@ -4,7 +4,7 @@ import os
 packages = ['wxPython', 'pyreadline']
 
 if os.name == "nt":
-    packages.append('win32gui')
+    packages.append('pywin32')
 
 setup(name='c__lib',
       version='0.6',
