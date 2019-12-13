@@ -1,4 +1,10 @@
 from setuptools import setup
+import os
+
+packages = ['wxPython', 'pyreadline']
+
+if os.name == "nt":
+    packages.append('win32gui')
 
 setup(name='c__lib',
       version='0.6',
@@ -8,4 +14,5 @@ setup(name='c__lib',
       author_email='cubiss.dev@gmail.com',
       license='WTFPL',
       packages=['c__lib'],
-      zip_safe=True, install_requires=['pywin32', 'wxPython', 'pyreadline'])
+      zip_safe=True,
+      install_requires=packages)
