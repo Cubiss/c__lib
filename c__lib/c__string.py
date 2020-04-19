@@ -261,5 +261,89 @@ def money_string(amount, spacer=" ", delimiter=".", group_size=3, decimals=2):
     return ret
 
 
+def format_table(table, header=None, none_value='x', column_separator=' | ', row_separator=None, header_separator=None):
+    """
+    Creates a well formatted table from an iterable (rows) of iterables (columns).
+    :param header_separator: 
+    :param row_separator: 
+    :param column_separator: 
+    :param none_value: 
+    :param table:
+    :param header:
+    :return:s
+    """
+
+    # Check arguments
+    if table is None or len(table) == 0:
+        raise CubissException("Table must not be empty.")
+    if column_separator is None:
+        column_separator = ''
+
+    if header_separator is not None:
+        if not (hasattr(header_separator, '__len__') and len(header_separator) ==3):
+            header_separator = (str(header_separator), str(header_separator), str(header_separator))
+
+    if header_separator is not None:
+        if not (hasattr(row_separator, '__len__') and len(row_separator) ==3):
+            row_separator = (str(row_separator), str(row_separator), str(row_separator))
+
+
+
+    columns = 0
+    if header is not None:
+        columns = len(header)
+    else:
+        columns = len(table[0])
+
+    for row in table:
+        if len(row) != columns:
+            raise CubissException("Table and header must have equal number of columns.")
+
+    # Replace None values and non-strings
+    if header is not None:
+        for i in range(0, len(header)):
+            if header[i] is None:
+                header[i] = none_value
+            else:
+                header[i] = str(header[i])
+    for row in table:
+        for i in range(0, len(row)):
+            if row[i] is None:
+                row[i] = none_value
+            else:
+                row[i] = str(row[i])
+
+    # Evaluate length of each column
+    lengths = []
+    if header is None:
+        for column in table[0]:
+            lengths.append(len(column))
+    else:
+        for column in header:
+            lengths.append(len(column))
+
+    for row in table:
+        for i, column in enumerate(row):
+            lengths[i] = max(lengths[i], len(column))
+
+    # Create the table
+    ret_string = ''
+    if header is not None:
+        for i, (column, length) in enumerate(zip(header, lengths)):
+            ret_string += f'{column:<{length}}' + (column_separator if i < len(header) - 1 else '')
+        if header_separator is not None:
+            ret_string += '\n' + header_separator[0] + header_separator[1] * (sum(lengths) + len(lengths) * len(column_separator) - 2) + header_separator[2]
+        ret_string += '\n'
+    for row in table:
+        for i, (column, length) in enumerate(zip(row, lengths)):
+            ret_string += f'{column:<{length}}' + (column_separator if i < len(row) - 1 else '')
+        if row != table[-1]:  # not for last row
+            if row_separator is not None:
+                ret_string += '\n' + row_separator[0] + row_separator[1] * (sum(lengths) + len(lengths) * len(column_separator) - 2) + row_separator[2]
+            ret_string += '\n'
+
+    return ret_string
+
+
 if __name__ == '__main__':
     print('This is just a library. Not a runnable script.')
