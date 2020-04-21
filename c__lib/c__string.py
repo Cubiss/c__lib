@@ -74,7 +74,13 @@ def print_progress(progress, finish,
     :param progress_bar_len: Length of progress bar. i.e. 50
     :return: None
     """
-    symbols = progress // (finish // progress_bar_len)
+
+    scale = 1
+
+    if finish < progress_bar_len:
+        scale = progress_bar_len / finish
+
+    symbols = int((progress * scale) // ((finish / progress_bar_len) * scale))
 
     if display_file_size and progress_bar:
         print(start_symbol +
