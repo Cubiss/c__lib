@@ -1,6 +1,6 @@
 from c__lib.c__lib import CubissException
 import re
-import sys
+
 
 def base_n(number, base, fill=(0, ''), symbols="0123456789abcdefghijklmnopqrstuvwxyz"):
     """Converts 'number' to string representation in specified base."""
@@ -87,20 +87,18 @@ def print_progress(progress, finish,
               "".rjust(symbols, progress_symbol) +
               "".rjust(progress_bar_len - symbols, full_symbol) +
               ']',
-              end=end_symbol)
+              end=end_symbol, flush=True)
     elif display_file_size:
         print(start_symbol +
               "{}/{}".format(str(progress).rjust(len(str(progress)), ' '), str(finish)),
-              end=end_symbol)
+              end=end_symbol, flush=True)
     elif progress_bar:
         print(start_symbol +
               '[' +
               "".rjust(symbols, progress_symbol) +
               "".rjust(progress_bar_len - symbols, full_symbol) +
               ']',
-              end=end_symbol)
-
-    sys.stdout.flush()
+              end=end_symbol, flush=True)
 
 
 def print_data_transfer_progress(progress, finish,
@@ -130,20 +128,18 @@ def print_data_transfer_progress(progress, finish,
               "".rjust(symbols, progress_symbol) +
               "".rjust(progress_bar_len - symbols, full_symbol) +
               ']',
-              end=end_symbol)
+              end=end_symbol, flush=True)
     elif display_file_size:
         print(start_symbol +
               "{}/{}".format(size_to_string(progress).rjust(size_to_string.max_len, ' '), size_to_string(finish)),
-              end=end_symbol)
+              end=end_symbol, flush=True)
     elif progress_bar:
         print(start_symbol +
               '[' +
               "".rjust(symbols, progress_symbol) +
               "".rjust(progress_bar_len - symbols, full_symbol) +
               ']',
-              end=end_symbol)
-
-    sys.stdout.flush()
+              end=end_symbol, flush=True)
 
 
 def seconds_to_czech_string(seconds):
