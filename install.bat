@@ -1,2 +1,2 @@
-py -3.8 -m pip install --upgrade ./
+py -m pip install --upgrade ./
 pause

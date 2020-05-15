@@ -1,6 +1,6 @@
 from c__lib.c__lib import CubissException
 import re
-
+import sys
 
 def base_n(number, base, fill=(0, ''), symbols="0123456789abcdefghijklmnopqrstuvwxyz"):
     """Converts 'number' to string representation in specified base."""
@@ -73,18 +73,16 @@ def print_progress(progress, finish,
     :param full_symbol: String representing one bit of unfinished task. Should be same width as progress_symbol i.e. '_'
     :param progress_bar_len: Length of progress bar. i.e. 50
     :return: None
+
     """
 
-    scale = 1
-
-    if finish < progress_bar_len:
-        scale = progress_bar_len / finish
+    scale = 1 if finish > progress_bar_len else scale = progress_bar_len / finish
 
     symbols = int((progress * scale) // ((finish / progress_bar_len) * scale))
 
     if display_file_size and progress_bar:
         print(start_symbol +
-              "{}/{} ".format(str(progress).rjust(len(str(progress)), ' '), str(finish)) +
+              f"{str(progress).rjust(len(str(finish)), ' ')}/{str(finish)} " +
               '[' +
               "".rjust(symbols, progress_symbol) +
               "".rjust(progress_bar_len - symbols, full_symbol) +
@@ -101,6 +99,8 @@ def print_progress(progress, finish,
               "".rjust(progress_bar_len - symbols, full_symbol) +
               ']',
               end=end_symbol)
+
+    sys.stdout.flush()
 
 
 def print_data_transfer_progress(progress, finish,
@@ -142,6 +142,8 @@ def print_data_transfer_progress(progress, finish,
               "".rjust(progress_bar_len - symbols, full_symbol) +
               ']',
               end=end_symbol)
+
+    sys.stdout.flush()
 
 
 def seconds_to_czech_string(seconds):
@@ -289,11 +291,9 @@ def format_table(table, header=None, none_value='x', column_separator=' | ', row
         if not (hasattr(header_separator, '__len__') and len(header_separator) ==3):
             header_separator = (str(header_separator), str(header_separator), str(header_separator))
 
-    if header_separator is not None:
+    if row_separator is not None:
         if not (hasattr(row_separator, '__len__') and len(row_separator) ==3):
             row_separator = (str(row_separator), str(row_separator), str(row_separator))
-
-
 
     columns = 0
     if header is not None:
