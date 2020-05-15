@@ -76,7 +76,7 @@ def print_progress(progress, finish,
 
     """
 
-    scale = 1 if finish > progress_bar_len else scale = progress_bar_len / finish
+    scale = 1 if finish > progress_bar_len else progress_bar_len / finish
 
     symbols = int((progress * scale) // ((finish / progress_bar_len) * scale))
 
