@@ -60,7 +60,8 @@ def print_progress(progress, finish,
                    start_symbol='\r',
                    end_symbol='',
                    display_file_size=True,
-                   progress_bar=True, progress_symbol='*', full_symbol='_', progress_bar_len=50):
+                   progress_bar=True, progress_symbol='*', full_symbol='_', progress_bar_len=50,
+                   print_function=print):
     """
     Prints nicely formatted progress indicator.
     :param progress: How much is done.
@@ -72,6 +73,7 @@ def print_progress(progress, finish,
     :param progress_symbol: String representing one bit of finished progress. i.e. '*'
     :param full_symbol: String representing one bit of unfinished task. Should be same width as progress_symbol i.e. '_'
     :param progress_bar_len: Length of progress bar. i.e. 50
+    :param print_function: Function used instead of print
     :return: None
 
     """
@@ -81,31 +83,32 @@ def print_progress(progress, finish,
     symbols = int((progress * scale) // ((finish / progress_bar_len) * scale))
 
     if display_file_size and progress_bar:
-        print(start_symbol +
-              f"{str(progress).rjust(len(str(finish)), ' ')}/{str(finish)} " +
-              '[' +
-              "".rjust(symbols, progress_symbol) +
-              "".rjust(progress_bar_len - symbols, full_symbol) +
-              ']',
-              end=end_symbol, flush=True)
+        print_function(start_symbol +
+                       f"{str(progress).rjust(len(str(finish)), ' ')}/{str(finish)} " +
+                       '[' +
+                       "".rjust(symbols, progress_symbol) +
+                       "".rjust(progress_bar_len - symbols, full_symbol) +
+                       ']',
+                       end=end_symbol, flush=True)
     elif display_file_size:
-        print(start_symbol +
-              "{}/{}".format(str(progress).rjust(len(str(progress)), ' '), str(finish)),
-              end=end_symbol, flush=True)
+        print_function(start_symbol +
+                       "{}/{}".format(str(progress).rjust(len(str(progress)), ' '), str(finish)),
+                       end=end_symbol, flush=True)
     elif progress_bar:
-        print(start_symbol +
-              '[' +
-              "".rjust(symbols, progress_symbol) +
-              "".rjust(progress_bar_len - symbols, full_symbol) +
-              ']',
-              end=end_symbol, flush=True)
+        print_function(start_symbol +
+                       '[' +
+                       "".rjust(symbols, progress_symbol) +
+                       "".rjust(progress_bar_len - symbols, full_symbol) +
+                       ']',
+                       end=end_symbol, flush=True)
 
 
 def print_data_transfer_progress(progress, finish,
                                  start_symbol='\r',
                                  end_symbol='',
                                  display_file_size=True,
-                                 progress_bar=True, progress_symbol='*', full_symbol='_', progress_bar_len=50):
+                                 progress_bar=True, progress_symbol='*', full_symbol='_', progress_bar_len=50,
+                                 print_function=print):
     """
     Prints nicely formatted progress with file size indicator.
     :param progress: How much is done (in bytes).
@@ -117,29 +120,32 @@ def print_data_transfer_progress(progress, finish,
     :param progress_symbol: String representing one bit of finished progress. i.e. '*'
     :param full_symbol: String representing one bit of unfinished task. Should be same width as progress_symbol i.e. '_'
     :param progress_bar_len: Length of progress bar. i.e. 50
+    :param print_function: Function used instead of print
     :return: None
     """
     symbols = progress // (finish // progress_bar_len)
 
     if display_file_size and progress_bar:
-        print(start_symbol +
-              "{}/{} ".format(size_to_string(progress).rjust(size_to_string.max_len, ' '), size_to_string(finish)) +
-              '[' +
-              "".rjust(symbols, progress_symbol) +
-              "".rjust(progress_bar_len - symbols, full_symbol) +
-              ']',
-              end=end_symbol, flush=True)
+        print_function(start_symbol +
+                       "{}/{} ".format(size_to_string(progress).rjust(size_to_string.max_len, ' '),
+                                       size_to_string(finish)) +
+                       '[' +
+                       "".rjust(symbols, progress_symbol) +
+                       "".rjust(progress_bar_len - symbols, full_symbol) +
+                       ']',
+                       end=end_symbol, flush=True)
     elif display_file_size:
-        print(start_symbol +
-              "{}/{}".format(size_to_string(progress).rjust(size_to_string.max_len, ' '), size_to_string(finish)),
-              end=end_symbol, flush=True)
+        print_function(start_symbol +
+                       "{}/{}".format(size_to_string(progress).rjust(size_to_string.max_len, ' '),
+                                      size_to_string(finish)),
+                       end=end_symbol, flush=True)
     elif progress_bar:
-        print(start_symbol +
-              '[' +
-              "".rjust(symbols, progress_symbol) +
-              "".rjust(progress_bar_len - symbols, full_symbol) +
-              ']',
-              end=end_symbol, flush=True)
+        print_function(start_symbol +
+                       '[' +
+                       "".rjust(symbols, progress_symbol) +
+                       "".rjust(progress_bar_len - symbols, full_symbol) +
+                       ']',
+                       end=end_symbol, flush=True)
 
 
 def seconds_to_czech_string(seconds):
@@ -214,8 +220,8 @@ def seconds_to_czech_string(seconds):
 
 def money_string(amount, spacer=" ", delimiter=".", group_size=3, decimals=2):
     """
-    Formats ammount as money string.
-    :param amount: Ammount of money. Must be integer, float or anything convertible to float.
+    Formats amount as money string.
+    :param amount: Amount of money. Must be integer, float or anything convertible to float.
     :param spacer: Character used to space groups. [" "]
     :param delimiter: Decimal delimiter. [.]
     :param group_size: Number of digits per group. [3]
@@ -284,14 +290,13 @@ def format_table(table, header=None, none_value='x', column_separator=' | ', row
         column_separator = ''
 
     if header_separator is not None:
-        if not (hasattr(header_separator, '__len__') and len(header_separator) ==3):
+        if not (hasattr(header_separator, '__len__') and len(header_separator) == 3):
             header_separator = (str(header_separator), str(header_separator), str(header_separator))
 
     if row_separator is not None:
-        if not (hasattr(row_separator, '__len__') and len(row_separator) ==3):
+        if not (hasattr(row_separator, '__len__') and len(row_separator) == 3):
             row_separator = (str(row_separator), str(row_separator), str(row_separator))
 
-    columns = 0
     if header is not None:
         columns = len(header)
     else:
@@ -334,14 +339,16 @@ def format_table(table, header=None, none_value='x', column_separator=' | ', row
         for i, (column, length) in enumerate(zip(header, lengths)):
             ret_string += f'{column:<{length}}' + (column_separator if i < len(header) - 1 else '')
         if header_separator is not None:
-            ret_string += '\n' + header_separator[0] + header_separator[1] * (sum(lengths) + len(lengths) * len(column_separator) - 2) + header_separator[2]
+            ret_string += '\n' + header_separator[0] + header_separator[1] * (
+                        sum(lengths) + len(lengths) * len(column_separator) - 2) + header_separator[2]
         ret_string += '\n'
     for row in table:
         for i, (column, length) in enumerate(zip(row, lengths)):
             ret_string += f'{column:<{length}}' + (column_separator if i < len(row) - 1 else '')
         if row != table[-1]:  # not for last row
             if row_separator is not None:
-                ret_string += '\n' + row_separator[0] + row_separator[1] * (sum(lengths) + len(lengths) * len(column_separator) - 2) + row_separator[2]
+                ret_string += '\n' + row_separator[0] + row_separator[1] * (
+                            sum(lengths) + len(lengths) * len(column_separator) - 2) + row_separator[2]
             ret_string += '\n'
 
     return ret_string

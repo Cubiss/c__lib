@@ -1,7 +1,7 @@
 from setuptools import setup
 import os
 
-packages = ['pyreadline']
+packages = ['pyreadline', 'wxPython']
 
 if os.name == "nt":
     packages.append('pywin32')

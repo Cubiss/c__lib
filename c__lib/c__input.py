@@ -16,30 +16,46 @@ except ImportError:
 
         c__input_implementation = 'windows'
     except ImportError:
+        Readline = None
         c__input_implementation = False
 
 # c__input
 if c__input_implementation == 'linux':
-    def c__input(prompt, prefill=''):
+    def c__input(prompt, prefill: str = ''):
         readline.set_startup_hook(lambda: readline.insert_text(prefill))
         try:
             return input(prompt)
         finally:
             readline.set_startup_hook()
 elif c__input_implementation == 'windows':
-    def c__input(prompt, prefill=''):
+    def c__input(prompt, prefill: str = '', log_function=None):
         try:
+            if prefill != '' and prefill is not None:
+                if log_function is not None:
+                    log_function(f'Prefill is not supported: {prefill}')
             return input(prompt)
         finally:
             readline.set_startup_hook()
 
 
 elif c__input_implementation:
-    def c__input(prompt: str, prefill=''):
+    def c__input(prompt: str, prefill='', log_function=None):
+        if prefill != '' and prefill is not None:
+            if log_function is not None:
+                log_function(f'Prefill is not supported: {prefill}')
+        if prompt != '' and prompt is not None:
+            if log_function is not None:
+                log_function(f'Prompt is not supported: {prefill}')
         raise CubissException("This function is not available due to missing implementation: {}"
                               .format(c__input_implementation))
 else:
-    def c__input(prompt: str, prefill=''):
+    def c__input(prompt: str, prefill='', log_function=None):
+        if prefill != '' and prefill is not None:
+            if log_function is not None:
+                log_function(f'Prefill is not supported: {prefill}')
+        if prompt != '' and prompt is not None:
+            if log_function is not None:
+                log_function(f'Prompt is not supported: {prefill}')
         raise CubissException("This function is not available due to a missing module. \n"
                               "Make sure you have 'readline' module (linux) or 'pyreadline' module (windows).")
 
