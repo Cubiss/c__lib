@@ -1,13 +1,14 @@
 from setuptools import setup
 import os
 
-packages = ['pyreadline', 'wxPython']
+packages = ['pyreadline']
 
 if os.name == "nt":
     packages.append('pywin32')
+    packages.append('wxPython')
 
 setup(name='c__lib',
-      version='0.15',
+      version='0.16',
       description='A personal collection of some useful functionalities.',
       url='https://github.com/Cubiss/c__lib',
       author='Cubiss',
