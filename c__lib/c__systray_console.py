@@ -3,7 +3,6 @@ try:
     import wx.adv
 except ImportError:
     wx = None
-    wx.adv = None
 
 try:
     import win32gui, win32con
