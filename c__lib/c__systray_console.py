@@ -1,6 +1,15 @@
-import wx
-import wx.adv
-import win32gui, win32con
+try:
+    import wx
+    import wx.adv
+except ImportError:
+    wx = None
+    wx.adv = None
+
+try:
+    import win32gui, win32con
+except ImportError:
+    win32gui = None
+    win32con = None
 
 # TRAY_TOOLTIP = 'WarframeDB'
 # TRAY_ICON = 'icon.png'
@@ -8,6 +17,12 @@ import win32gui, win32con
 
 class SysTrayConsole(wx.adv.TaskBarIcon):
     def __init__(self, tray_tooltip, tray_icon, console_window_hwnd=None):
+        if wx is None:
+            raise Exception("Cannot use SysTrayConsole: wxPython is not present.")
+
+        if win32gui is None:
+            raise Exception("Cannot use SysTrayConsole: pywin32 is not present.")
+
         app = wx.App()
 
         # todo: get status instead of keeping in memory
