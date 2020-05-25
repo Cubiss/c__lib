@@ -1,5 +1,10 @@
 import sys
-import os, tempfile
+import os
+import tempfile
+try:
+    import win32file
+except ImportError:
+    win32file = None
 
 
 class CubissException(Exception):
@@ -21,10 +26,11 @@ def get_platform():
     return platforms[sys.platform]
 
 
-def link(target, link_name, overwrite=False, try_symlink=False):
+def link(target, link_name, overwrite=False, try_symlink=False, try_junction=True):
     """
     Create a link named link_name pointing to target.
     If try_link is set and link creation fails, try to create symlink.
+    If the try_junction is set, try to create junction.
     If link_name exists then FileExistsError is raised, unless overwrite=True.
     When trying to overwrite a directory, IsADirectoryError is raised.
     """
@@ -33,9 +39,12 @@ def link(target, link_name, overwrite=False, try_symlink=False):
         try:
             os.link(target, link_name)
         except OSError:
-            if not try_symlink:
+            if try_junction and os.path.isdir(target):
+                win32file.CreateSymbolicLink(link_name, target, 1)
+            elif try_symlink:
+                os.symlink(target, link_name)
+            else:
                 raise
-            os.symlink(target, link_name)
         return
 
     # os.replace() may fail if files are on different filesystems
@@ -52,9 +61,12 @@ def link(target, link_name, overwrite=False, try_symlink=False):
             try:
                 os.link(target, link_name)
             except OSError:
-                if try_symlink:
+                if try_junction and os.path.isdir(target):
+                    win32file.CreateSymbolicLink(link_name, target, 1)
+                elif try_symlink:
+                    os.symlink(target, link_name)
+                else:
                     raise
-                os.symlink(target, link_name)
             break
         except FileExistsError:
             pass
