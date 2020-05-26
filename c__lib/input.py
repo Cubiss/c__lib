@@ -60,35 +60,39 @@ else:
                               "Make sure you have 'readline' module (linux) or 'pyreadline' module (windows).")
 
 
-def yes_no_input(prompt: str, yes_responses: list = None, no_responses: list = None):
+def yes_no_input(prompt: str, yes_responses: list = None, no_responses: list = None, ignore_case=True):
     """
     Displays prompt and waits for 'right' answer (yes/no and abbreviations])
     :param prompt: Message to be displayed until user gives correct answer.
     :param yes_responses: Answers which return true. [y, yes] by default.
     :param no_responses: Answers which return false. [n, no] by default.
+    :param ignore_case: Ignore case when matching answer with possible responses.
     :return: True if user's answer is in yes_responses.
     """
 
-    yes_responses = yes_responses or ['y', 'yes']
-    no_responses = no_responses or ['no', 'n']
+    yes_responses = yes_responses or ['y', 'yes', 'Y', 'Yes']
+    no_responses = no_responses or ['no', 'n', 'N', 'No']
 
     while True:
         response = input(prompt)
-        if response.lower() in [r.lower() for r in yes_responses]:
+        if (response.lower() if ignore_case else response) in \
+                [r.lower() if ignore_case else r for r in yes_responses]:
             return True
-        elif response.lower() in [r.lower() for r in no_responses]:
+        elif (response.lower() if ignore_case else response) in \
+                [r.lower() if ignore_case else r for r in no_responses]:
             return False
         else:
             continue
 
 
-def multiple_choice_input(prompt: str, choices):
+def multiple_choice_input(prompt: str, choices, ignore_case=True):
     """
     Displays multiple choice prompt and waits for 'right' answer (number/key in choices dict)
     :param prompt: Message to be displayed until user gives correct answer.
     :param choices: An iterable of choices.
                     If it is dictionary, choices will be displayed as '<key>) <value>' and chosen key will be returned.
                     If it is other iterable, choices will be displayed as '<index>) <value>' and index will be returned.
+    :param ignore_case: Ignore case when matching answer with possible responses.
     :return: Key (or index) of chosen answer.
     """
     if len(choices) < 1:
@@ -97,9 +101,7 @@ def multiple_choice_input(prompt: str, choices):
     if not issubclass(type(choices), dict):
         choices = {key: value for key, value in enumerate(choices)}
 
-    original_keys = {str(key): key for key in choices.keys()}
-
-    choices = {str(key): value for key, value in choices.items()}
+    choices = {str(key).lower() if ignore_case else str(key): value for key, value in choices.items()}
 
     while True:
         print(prompt)
@@ -107,8 +109,8 @@ def multiple_choice_input(prompt: str, choices):
             print(f'{str(key)}) {value}')
         response = input()
 
-        if response in choices.keys():
-            return original_keys[response]
+        if (response.lower() if ignore_case else response) in choices.keys():
+            return choices[response]
         else:
             continue
 

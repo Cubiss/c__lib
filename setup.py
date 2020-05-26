@@ -8,7 +8,7 @@ if os.name == "nt":
     packages.append('wxPython')
 
 setup(name='c__lib',
-      version='1.00',
+      version='1.01',
       description='A personal collection of some useful functionalities.',
       url='https://github.com/Cubiss/c__lib',
       author='Cubiss',
