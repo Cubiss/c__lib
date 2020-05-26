@@ -1,4 +1,4 @@
-from c__lib.c__lib import CubissException
+from c__lib.misc import CubissException
 import re
 
 

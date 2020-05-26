@@ -1,5 +1,5 @@
 # version 1.0.0
-from c__lib.c__lib import get_platform, CubissException
+from c__lib.misc import get_platform, CubissException
 
 # Getting implementations based on system.
 try:
