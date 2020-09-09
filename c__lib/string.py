@@ -297,6 +297,10 @@ def format_table(table, header=None, none_value='x', column_separator=' | ', row
         if not (hasattr(row_separator, '__len__') and len(row_separator) == 3):
             row_separator = (str(row_separator), str(row_separator), str(row_separator))
 
+    if isinstance(table, dict):
+        header = list(table.keys())
+        table = list(table.values())
+
     if header is not None:
         columns = len(header)
     else:
