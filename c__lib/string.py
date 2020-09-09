@@ -307,7 +307,7 @@ def format_table(table, header=None, none_value='x', column_separator=' | ', row
             table = [[key, ] + row for key, row in table]
 
     if isinstance(table[0], dict):
-        header = table[0].keys()
+        header = list(table[0].keys())
         table = [list(row.values()) for row in table]
 
     if header is not None:
