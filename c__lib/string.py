@@ -298,8 +298,17 @@ def format_table(table, header=None, none_value='x', column_separator=' | ', row
             row_separator = (str(row_separator), str(row_separator), str(row_separator))
 
     if isinstance(table, dict):
-        header = list(table.keys())
-        table = list(table.values())
+        if isinstance(table[0], dict):
+            key_column_name = "key"
+            while key_column_name in table:
+                key_column_name += "_"
+            table = [row.update({key_column_name: key}) for key, row in table]
+        else:
+            table = [[key, ] + row for key, row in table]
+
+    if isinstance(table[0], dict):
+        header = table[0].keys()
+        table = [list(row.values()) for row in table]
 
     if header is not None:
         columns = len(header)
