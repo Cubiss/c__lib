@@ -35,22 +35,12 @@ def size_to_string(size):
     :param size: Number of Bytes.
     :return: String representation of bytes.
     """
-    if size < 9.999e3:
-        return "{0:.1f} B".format(size)
-    elif size < 9.999e6:
-        return "{0:.1f} kB".format(size / 10e3)
-    elif size < 9.999e9:
-        return "{0:.1f} MB".format(size / 10e6)
-    elif size < 9.999e12:
-        return "{0:.1f} GB".format(size / 10e9)
-    elif size < 9.999e15:
-        return "{0:.1f} TB".format(size / 10e12)
-    elif size < 9.999e18:
-        return "{0:.1f} EB".format(size / 10e15)
-    elif size < 9.999e21:
-        return "{0:.1f} ZB".format(size / 10e18)
-    elif size < 9.999e24:
-        return "{0:.1f} YB".format(size / 10e21)
+
+    prefixes = ['', 'k', 'M', 'G', 'T', 'E', 'Z', 'Y']
+
+    for i in range(0, len(prefixes)):
+        if size < 2**((i+1)*10):
+            return f"{size/(2**(i*10)):.1f} {prefixes[i]}B"
 
 
 size_to_string.max_len = 8  # Maximal length of string returned by size_to_string.
@@ -271,10 +261,18 @@ def money_string(amount, spacer=" ", delimiter=".", group_size=3, decimals=2):
     return ret
 
 
-def format_table(table, header=None, none_value='x', column_separator=' | ', row_separator=None, header_separator=None):
+def format_table(
+        table,
+        header=None,
+        justify=None,
+        none_value='x',
+        column_separator=' | ',
+        row_separator=None,
+        header_separator=None):
     """
     Creates a well formatted table from an iterable (rows) of iterables (columns).
-    :param header_separator: 
+    :param justify:
+    :param header_separator:
     :param row_separator: 
     :param column_separator: 
     :param none_value: 
@@ -297,6 +295,7 @@ def format_table(table, header=None, none_value='x', column_separator=' | ', row
         if not (hasattr(row_separator, '__len__') and len(row_separator) == 3):
             row_separator = (str(row_separator), str(row_separator), str(row_separator))
 
+    # If the table is dict, make keys first the column
     if isinstance(table, dict):
         if isinstance(table[0], dict):
             key_column_name = "key"
@@ -306,26 +305,29 @@ def format_table(table, header=None, none_value='x', column_separator=' | ', row
         else:
             table = [[key, ] + row for key, row in table]
 
+    # If the data rows are dicts, build header from keys
     if isinstance(table[0], dict):
         header = list(table[0].keys())
         table = [list(row.values()) for row in table]
 
+    # Make header the first column in table
     if header is not None:
-        columns = len(header)
-    else:
-        columns = len(table[0])
+        table = [header, ] + table
 
+    # Validate/create justify list
+    if justify is None:
+        justify = ['<'] * len(table[0])
+    elif len(justify) != len(table[0]):
+        raise CubissException("Justify list must be the same length as column count.")
+    elif any(j not in ['<', '>'] for j in justify):
+        raise CubissException("Justify list must consist of '<' and '>' symbols only.")
+
+    # Check if the list is uniform
     for row in table:
-        if len(row) != columns:
+        if len(row) != len(table[0]):
             raise CubissException("Table and header must have equal number of columns.")
 
     # Replace None values and non-strings
-    if header is not None:
-        for i in range(0, len(header)):
-            if header[i] is None:
-                header[i] = none_value
-            else:
-                header[i] = str(header[i])
     for row in table:
         for i in range(0, len(row)):
             if row[i] is None:
@@ -333,35 +335,28 @@ def format_table(table, header=None, none_value='x', column_separator=' | ', row
             else:
                 row[i] = str(row[i])
 
-    # Evaluate length of each column
-    lengths = []
-    if header is None:
-        for column in table[0]:
-            lengths.append(len(column))
-    else:
-        for column in header:
-            lengths.append(len(column))
-
+    # Calculate width of each column
+    widths = [0] * len(table[0])
     for row in table:
         for i, column in enumerate(row):
-            lengths[i] = max(lengths[i], len(column))
+            widths[i] = max(widths[i], len(column))
 
     # Create the table
     ret_string = ''
-    if header is not None:
-        for i, (column, length) in enumerate(zip(header, lengths)):
-            ret_string += f'{column:<{length}}' + (column_separator if i < len(header) - 1 else '')
-        if header_separator is not None:
+    for row_no, row in enumerate(table):
+        # write row
+        for i, (column, length) in enumerate(zip(row, widths)):
+            ret_string += f'{column:{justify[i]}{length}}' + (column_separator if i < len(row) - 1 else '')
+        # write header separator
+        if header_separator is not None and row_no == 0:
             ret_string += '\n' + header_separator[0] + header_separator[1] * (
-                        sum(lengths) + len(lengths) * len(column_separator) - 2) + header_separator[2]
-        ret_string += '\n'
-    for row in table:
-        for i, (column, length) in enumerate(zip(row, lengths)):
-            ret_string += f'{column:<{length}}' + (column_separator if i < len(row) - 1 else '')
-        if row != table[-1]:  # not for last row
-            if row_separator is not None:
-                ret_string += '\n' + row_separator[0] + row_separator[1] * (
-                            sum(lengths) + len(lengths) * len(column_separator) - 2) + row_separator[2]
+                        sum(widths) + len(widths) * len(column_separator) - 2) + header_separator[2]
+        #  write row separator
+        elif row_separator is not None and row_no+1 < len(table):  # not for last row
+            ret_string += '\n' + row_separator[0] + row_separator[1] * (
+                        sum(widths) + len(widths) * len(column_separator) - 2) + row_separator[2]
+        # write newline
+        if row_no + 1 < len(table):
             ret_string += '\n'
 
     return ret_string
