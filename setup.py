@@ -1,11 +1,10 @@
 from setuptools import setup
 import os
 
-packages = ['pyreadline']
+extras_require = {'c__input': ['pyreadline']}
 
 if os.name == "nt":
-    packages.append('pywin32')
-    packages.append('wxPython')
+    extras_require['SysTrayConsole'] = ['pywin32', 'wxPython']
 
 setup(name='c__lib',
       version='1.0.2',
@@ -16,4 +15,4 @@ setup(name='c__lib',
       license='WTFPL',
       packages=['c__lib'],
       zip_safe=True,
-      install_requires=packages)
+      extras_require=extras_require)
