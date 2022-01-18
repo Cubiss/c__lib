@@ -7,7 +7,7 @@ if os.name == "nt":
     extras_require['SysTrayConsole'] = ['pywin32', 'wxPython']
 
 setup(name='c__lib',
-      version='1.0.2',
+      version='1.0.3',
       description='A personal collection of some useful functionalities.',
       url='https://github.com/Cubiss/c__lib',
       author='Cubiss',

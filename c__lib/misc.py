@@ -12,13 +12,18 @@ class CubissException(Exception):
     pass
 
 
+platform_windows = 'win'
+platform_linux = 'lin'
+platform_osx = 'osx'
+
+
 def get_platform():
     """Returns 'lin' on linux, 'win' on windows or 'osx' on mac."""
     platforms = {
-        'linux1': 'lin',
-        'linux2': 'lin',
-        'darwin': 'osx',
-        'win32': 'win'
+        'linux1': platform_linux,
+        'linux2': platform_linux,
+        'darwin': platform_osx,
+        'win32': platform_windows
     }
     if sys.platform not in platforms:
         return sys.platform
