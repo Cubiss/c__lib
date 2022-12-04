@@ -10,7 +10,7 @@ try:
     c__input_implementation = 'linux'
 except ImportError:
     try:
-        from pyreadline import Readline
+        from pyreadline3 import Readline
 
         readline = Readline()
 
