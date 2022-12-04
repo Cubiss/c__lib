@@ -16,8 +16,15 @@ except ImportError:
 
         c__input_implementation = 'windows'
     except ImportError:
-        Readline = None
-        c__input_implementation = False
+        try:
+            from pyreadline import Readline
+
+            readline = Readline()
+
+            c__input_implementation = 'windows'
+        except ImportError:
+            Readline = None
+            c__input_implementation = False
 
 # c__input
 if c__input_implementation == 'linux':
