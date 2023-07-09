@@ -74,23 +74,23 @@ def print_progress(progress, finish,
     symbols = int((progress * scale) // ((finish / progress_bar_len) * scale))
 
     if display_file_size and progress_bar:
-        print_function(start_symbol + description +
+        print_function(start_symbol +
                        f"{str(progress).rjust(len(str(finish)), ' ')}/{str(finish)} " +
                        '[' +
                        "".rjust(symbols, progress_symbol) +
                        "".rjust(progress_bar_len - symbols, full_symbol) +
-                       ']',
+                       ']' + description,
                        end=end_symbol, flush=True)
     elif display_file_size:
-        print_function(start_symbol + description +
-                       "{}/{}".format(str(progress).rjust(len(str(progress)), ' '), str(finish)),
+        print_function(start_symbol +
+                       "{}/{}".format(str(progress).rjust(len(str(progress)), ' '), str(finish)) + description,
                        end=end_symbol, flush=True)
     elif progress_bar:
-        print_function(start_symbol + description +
+        print_function(start_symbol +
                        '[' +
                        "".rjust(symbols, progress_symbol) +
                        "".rjust(progress_bar_len - symbols, full_symbol) +
-                       ']',
+                       ']' + description,
                        end=end_symbol, flush=True)
 
 
