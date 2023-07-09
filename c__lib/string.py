@@ -49,6 +49,7 @@ size_to_string.max_len = 8  # Maximal length of string returned by size_to_strin
 def print_progress(progress, finish,
                    start_symbol='\r',
                    end_symbol='',
+                   description='',
                    display_file_size=True,
                    progress_bar=True, progress_symbol='*', full_symbol='_', progress_bar_len=50,
                    print_function=print):
@@ -58,6 +59,7 @@ def print_progress(progress, finish,
     :param finish: How much is 100%.
     :param start_symbol: String that will be before progress bar.
     :param end_symbol: String that will be after progress bar.
+    :param process_description Short description of the progress :
     :param display_file_size: Whether text representation should be displayed. i.e. '[14/50]'
     :param progress_bar: Whether progress bar should be displayed. i.e. '(******_________)'
     :param progress_symbol: String representing one bit of finished progress. i.e. '*'
@@ -65,7 +67,6 @@ def print_progress(progress, finish,
     :param progress_bar_len: Length of progress bar. i.e. 50
     :param print_function: Function used instead of print
     :return: None
-
     """
 
     scale = 1 if finish > progress_bar_len else progress_bar_len / finish
@@ -73,7 +74,7 @@ def print_progress(progress, finish,
     symbols = int((progress * scale) // ((finish / progress_bar_len) * scale))
 
     if display_file_size and progress_bar:
-        print_function(start_symbol +
+        print_function(start_symbol + description +
                        f"{str(progress).rjust(len(str(finish)), ' ')}/{str(finish)} " +
                        '[' +
                        "".rjust(symbols, progress_symbol) +
@@ -81,11 +82,11 @@ def print_progress(progress, finish,
                        ']',
                        end=end_symbol, flush=True)
     elif display_file_size:
-        print_function(start_symbol +
+        print_function(start_symbol + description +
                        "{}/{}".format(str(progress).rjust(len(str(progress)), ' '), str(finish)),
                        end=end_symbol, flush=True)
     elif progress_bar:
-        print_function(start_symbol +
+        print_function(start_symbol + description +
                        '[' +
                        "".rjust(symbols, progress_symbol) +
                        "".rjust(progress_bar_len - symbols, full_symbol) +
